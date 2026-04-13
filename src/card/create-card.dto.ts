@@ -1,13 +1,10 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator'
 import { Priority } from 'src/enums/priority';
 
-export class CreateCardDTO  {
+export class CreateCardDto  {
     @IsNotEmpty()
     @IsString()
     title!: string;
-    @IsNotEmpty()
-    @IsString()
-    columnId!: string
 
     @IsOptional()   
     @IsString()

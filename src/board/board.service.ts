@@ -11,7 +11,7 @@ import { Column } from 'src/column/column.object';
 @Injectable()
 export class BoardService {
     
-    private boards: Board[] = [];
+    /*private boards: Board[] = [];
 
     constructor(
         private columnService: ColumnService,
@@ -62,5 +62,5 @@ export class BoardService {
                 return this.extractBoardData(board)
             }
         )
-    }
+    }*/
 }

@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator'
 import { Priority } from 'src/enums/priority';
 
-export class EditCardDTO  {
+export class EditCardDto  {
 
     @IsString()
     title!: string;

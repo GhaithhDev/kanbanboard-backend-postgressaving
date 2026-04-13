@@ -1,64 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import {v4 as uuid} from 'uuid'
+import {
+  BadRequestException,
+  Get,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { Card } from './card.entity';
 
 //Enums
 import { Priority } from 'src/enums/priority';
 
-//Types
-import type { Card } from './card.object';
-import { EditCardDTO } from './editCard.dto';
-
-
+import { EditCardDto } from './edit-card.dto';
+import { CardRepository } from './card.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateCardDto } from './create-card.dto';
+import { GetCardsFilterDto } from './get-cards-fitler.dto';
 
 @Injectable()
 export class CardService {
-    private cards : Card[] = []
-    // Functionality //
-    // function to create a new card
+  constructor(private cardRepository: CardRepository) {}
 
-    
-    public createCard(columnId,cardTitle,cardDescription?, cardPriority?){
-        const card : Card = {
-            id: uuid(),
-            title: cardTitle,
-            priority: cardPriority ? cardPriority :  Priority.HIGH,
-            startDate: Date.now(),
-            description: cardDescription ? cardDescription : "",
-            columnId: columnId,
-        }
-        console.log(card);
-        this.cards.push(card)
-        return card;
-    }
-    //function to update a card by id
-    editCardDetails(editCardDto : EditCardDTO){
-        let card : Card | undefined = this.getCardByCardId(editCardDto.cardId);
-        if (!card){
-            console.warn("provided invalid id");
-            return;
-        }
+  public async getCardById(cardId: string) {
+    return this.cardRepository.getCardById(cardId);
+  }
 
-        card.columnId = editCardDto.columnId;
-        card.title = editCardDto.title;
-        card.description = editCardDto.description;
-        card.priority = editCardDto.priority;
+  public createCard(createCardDto: CreateCardDto): Promise<Card> {
+    return this.cardRepository.createCard(createCardDto);
+  }
 
-        return true;
-    }
-    //function to delete a card by id
+  public deleteCard(cardId: string) {
+    return this.cardRepository.deleteCard(cardId);
+  }
 
-   
-    //get all cards by column id
+  async updateCardDetails(editCardDto: EditCardDto) {
+    return this.cardRepository.updateCardDetails(editCardDto);
+  }
+
+  getCards (getCardsFilter : GetCardsFilterDto) : Promise<Card[]> {
+    return this.cardRepository.getCards(getCardsFilter);
+  }
+
+  /*//get all cards by column id
     public getCardsByColumnId(columnId : string) : Card[] {
         return this.cards.filter((card) => card.columnId === columnId);
     }
+*/
 
-    public getCardByCardId(cardId : string) : Card | undefined {
-        for (let i = 0; i < this.cards.length; i++){
-            if (this.cards[i].id == cardId){
-                return this.cards[i];
-            }
-        }
-    }
-
+  //async because this function will yield and I don't want the called to be yielded to unless he wants to
 }

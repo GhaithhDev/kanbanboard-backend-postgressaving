@@ -9,7 +9,7 @@ import type { ColumnData } from './columnData';
 @Injectable()
 export class ColumnService {
 
-    private columns : Column[] = []
+    /*private columns : Column[] = []
 
     constructor(private cardService : CardService) {}
 
@@ -47,5 +47,5 @@ export class ColumnService {
 
     public getColumnsByBoardId(boardId : string) : Column[] {
         return this.columns.filter((column) => column.parentBoardId === boardId);
-    }
+    }*/
 }

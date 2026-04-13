@@ -1,4 +1,4 @@
-import type { Card } from "../card/card.object";
+import { Card } from "src/card/card.entity";
 
 export class ColumnData {
     columnId : string;

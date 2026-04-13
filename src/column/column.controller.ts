@@ -9,7 +9,7 @@ export class ColumnController {
 
     constructor (private columnService : ColumnService) {}
 
-    @Get()
+    /*@Get()
     private getAllColumns(){
         return this.columnService.getAllColumns()
     }
@@ -22,5 +22,5 @@ export class ColumnController {
     @Post('create')
     private createColumn(@Body() createColumnDTO : CreateColumnDTO){
         this.columnService.createColumn(createColumnDTO.columnName,createColumnDTO.boardId);
-    }
+    }*/
 }

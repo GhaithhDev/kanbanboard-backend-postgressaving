@@ -10,7 +10,7 @@ export class BoardController {
 
     constructor(private boardService: BoardService) {} // inject BoardService to be a member of this class
 
-    @Get()
+    /*@Get()
     getAllBoards(){
         return this.boardService.getAllBoards()
     }
@@ -23,5 +23,5 @@ export class BoardController {
     @Post('create')
     createBoard(@Body() createBoardDto : CreateBoardDto ){
        return this.boardService.createBoard(createBoardDto.name);
-    }
+    }*/
 }
