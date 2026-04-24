@@ -7,9 +7,15 @@ export class Board {
 
     @Column()
     name: string; 
-    
+
+    @Column()
     ownerId!: string;
-    authorizedUsers!: string[];
+
+    @Column("text",{array: true, default: []})
+    authorizedUserIds!: string[];
+
+    @Column()
+    colorNum!: number;
 
     constructor(id : string, name : string){
         this.id = id;

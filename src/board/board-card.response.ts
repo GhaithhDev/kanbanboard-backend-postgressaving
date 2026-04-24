@@ -1,5 +1,9 @@
 export class BoardCardResponse {
     boardId!: string;
-    name!: string;
+    title!: string;
     columnIds!: string[];
+    columnsAmount!: number;
+    cardsAmount!: number;
+    colorNum!: number;
+    ownerUsername!: string;
 }

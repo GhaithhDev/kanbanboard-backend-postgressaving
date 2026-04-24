@@ -1,8 +1,11 @@
 // get-board.dto.ts
-import { IsString, IsNotEmpty } from 'class-validator'
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator'
 
 export class CreateBoardDto {
     @IsString()
     @IsNotEmpty()
     name!: string;
+
+    @IsNumber()
+    colorNum!: number;
 }

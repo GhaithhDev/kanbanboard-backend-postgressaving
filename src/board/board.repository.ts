@@ -20,20 +20,34 @@ export class BoardRepository extends Repository<Board> {
     if (!boardId) {
       throw new BadRequestException();
     }
-    const result = await this.findOne({ where: { id: boardId, ownerId: user.id } });
+    const result = await this.findOne({
+      where: { id: boardId, ownerId: user.id },
+    });
     if (!result) {
       throw new NotFoundException();
     }
     return result;
   }
 
-  public async createBoard(createBoardDto: CreateBoardDto, user: User): Promise<Board> {
-    const { name } = createBoardDto;
+  public async getUserBoards(user: User) :Promise<Board[]> {
+    const boards : Board[] = await this.findBy({ ownerId: user.id });
+    if (!boards || boards.length === 0) {
+      throw new NotFoundException();
+    }
+    return boards;
+  }
+
+  public async createBoard(
+    createBoardDto: CreateBoardDto,
+    user: User,
+  ): Promise<Board> {
+    const { name, colorNum } = createBoardDto;
 
     const newBoard = this.create({
       ownerId: user.id,
       name: name,
-      authorizedUsers: []
+      authorizedUserIds: [],
+      colorNum: colorNum
     });
 
     try {
@@ -42,16 +56,15 @@ export class BoardRepository extends Repository<Board> {
     } catch (error) {
       throw new InternalServerErrorException('Failed to create board');
     }
-
   }
 
-  public async getFirstBoard() : Promise<Board>{
-      const result = await this.findOne({
-        where: {}
-      })
-      if (!result){
-        throw new NotFoundException();
-      }
-      return result;
+  public async getFirstBoard(): Promise<Board> {
+    const result = await this.findOne({
+      where: {},
+    });
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
   }
 }

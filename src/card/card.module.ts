@@ -11,6 +11,6 @@ import { ColumnModule } from 'src/column/column.module';
   imports: [forwardRef(() => BoardModule), TypeOrmModule.forFeature([Card]), forwardRef(()=> ColumnModule)],
   controllers: [CardController],
   providers: [CardService, CardRepository],
-  exports: [CardService],
+  exports: [CardService,CardRepository],
 })
 export class CardModule {}
