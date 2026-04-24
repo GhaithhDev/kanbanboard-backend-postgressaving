@@ -1,62 +1,60 @@
-import { Inject, Injectable,forwardRef } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ColumnService } from 'src/column/column.service';
-import { CardService } from 'src/card/card.service';
-import {v4 as uuid} from 'uuid';
 
-import type { ColumnData } from 'src/column/columnData';
-import { BoardData } from './boardData';
-import { Board } from './board.object';
-import { Column } from 'src/column/column.object';
+import { BoardResponse } from './board.response';
+import { Board } from './board.entity';
+import { BoardRepository } from './board.repository';
+import { CreateBoardDto } from './create.board.dto';
+import { ColumnRepository } from 'src/column/column.repository';
+import { ColumnEntity } from 'src/column/column.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class BoardService {
-    
-    /*private boards: Board[] = [];
+  constructor(
+    private columnService: ColumnService,
+    private boardRepository: BoardRepository,
+    private columnRepository: ColumnRepository,
+  ) {}
 
-    constructor(
-        private columnService: ColumnService,
-        @Inject(forwardRef( () => CardService ))
-        private cardService: CardService
-        ) {} // inject ColumnService and CardService to be members of this class
+  private async extractBoardData(board: Board): Promise<BoardResponse> {
+    const columnsInBoard: ColumnEntity[] =
+      await this.columnRepository.getColumnsWithBoardId(board.id);
+    const boardData: BoardResponse = {
+      boardId: board.id,
+      name: board.name,
+      columnIds: columnsInBoard.map((column: ColumnEntity) => {
+        return column.id;
+      }),
+    };
+    return boardData;
+  }
 
-    private extractBoardData(board: Board): BoardData {
-        const boardData : BoardData = {
-            id: board.id,
-            name: board.name,
-            columns: this.columnService.getColumnsByBoardId(board.id).map( 
-                (column : Column) => {
-                   return this.columnService.extractColumnData(column);
-                }
-            )
-        }
-        return boardData;
-    }
-    
-    public createBoard(boardName: string){
-      
-        const newBoard : Board = new Board(uuid(),boardName)
+  public async createBoard(
+    createBoardDto: CreateBoardDto,
+    user: User
+  ): Promise<BoardResponse> {
+    const newBoard: Board =
+      await this.boardRepository.createBoard(createBoardDto,user); //save into the database and get an instance of it
+    this.columnService.createStarterColumnsForBoard(newBoard.id);
+    return this.extractBoardData(newBoard);
+  }
 
-        const starterColumns : ColumnData[] = this.columnService.createStarterColumnsForBoard(newBoard.id);
-        const boardData = new BoardData(
-            newBoard.id,
-            newBoard.name,
-            starterColumns
-        )
-      
-        this.boards.push(newBoard);
-        return this.extractBoardData(newBoard);
-    }
+  public async getFirstBoard(): Promise<BoardResponse> {
+    return this.extractBoardData(await this.boardRepository.getFirstBoard());
+  }
 
-    // function to get board data by board id (will call ColumnService to get get all columns with board id)
-    public getBoardDataById(boardId : string) : BoardData | undefined {
-        for (const board of this.boards){
-            if (board.id === boardId){
-                return this.extractBoardData(board)
-            }
-        }
-    }
+  public async getBoardDataById(
+    boardId: string,
+    user: User
+  ): Promise<BoardResponse | undefined> {
+    return this.extractBoardData(
+      await this.boardRepository.getBoardById(boardId,user),
+    );
+  }
 
-    public getAllBoards() : BoardData[] | undefined{
+  //Get all boards that users owns
+  /*public getAllBoards() : BoardResponse[] | undefined{
         return this.boards.map( 
             (board) => {
                 return this.extractBoardData(board)

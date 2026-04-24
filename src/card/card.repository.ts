@@ -11,11 +11,29 @@ import { CreateCardDto } from './create-card.dto';
 import { Priority } from 'src/enums/priority';
 import { EditCardDto } from './edit-card.dto';
 import { GetCardsFilterDto } from './get-cards-fitler.dto';
+import { ColumnEntity } from 'src/column/column.entity';
+import { ColumnRepository } from 'src/column/column.repository';
 
 @Injectable()
 export class CardRepository extends Repository<Card> {
-  constructor(private dataSource: DataSource) {
+  constructor(
+    private dataSource: DataSource,
+    private columnRepository: ColumnRepository,
+  ) {
     super(Card, dataSource.createEntityManager());
+  }
+
+  private async validateColumnId(columnId: string) {
+    const column: ColumnEntity | null = columnId
+      ? await this.columnRepository.findOne({
+          where: { id: columnId },
+        })
+      : null;
+    if (!columnId || !column) {
+      throw new BadRequestException('column id is not valid.');
+    }
+
+    return true;
   }
 
   public async getCardById(cardId: string) {
@@ -30,10 +48,13 @@ export class CardRepository extends Repository<Card> {
   }
 
   public async createCard(createCardDto: CreateCardDto): Promise<Card> {
-    const { title, priority, description } = createCardDto;
+    const { title, priority, description, parentColumnId } = createCardDto;
+
+    this.validateColumnId(parentColumnId);
 
     const newCard = this.create({
       title: title,
+      parentColumnId: parentColumnId,
       priority: priority ? priority : Priority.NORMAL,
       description: description ? description : '',
     });
@@ -86,21 +107,33 @@ export class CardRepository extends Repository<Card> {
     }
   }
 
-  public async getCards(getCardsFilter : GetCardsFilterDto): Promise<Card[]> {
+  public async getCards(getCardsFilter: GetCardsFilterDto): Promise<Card[]> {
     const query = this.createQueryBuilder('card');
-    const {search, priority, columnId} = getCardsFilter;
+    const { search, priority, columnId } = getCardsFilter;
 
-    if (priority){
-      query.andWhere('card.priority = :priority', {priority : priority});
+    if (priority) {
+      query.andWhere('card.priority = :priority', { priority: priority });
     }
-    
-    if (search){
-      query.andWhere('card.title ILIKE :search OR card.description ILIKE :search',{search : `%${search}%`});
+
+    if (search) {
+      query.andWhere(
+        'card.title ILIKE :search OR card.description ILIKE :search',
+        { search: `%${search}%` },
+      );
     }
     /*if (columnId){
       query.andWhere('card.columnId = :columnId', {columnId : columnId});
     }*/
 
     return query.getMany();
+  }
+
+  public async getCardsWithColumnId(columnId: string): Promise<Card[]> {
+    this.validateColumnId(columnId);
+    const result: Card[] = await this.findBy({ parentColumnId: columnId });
+    if (!result) {
+      throw new NotFoundException();
+    }
+    return result;
   }
 }

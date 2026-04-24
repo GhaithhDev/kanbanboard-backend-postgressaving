@@ -3,9 +3,11 @@ import { CardModule } from './card/card.module';
 import { ColumnModule } from './column/column.module';
 import { BoardModule } from './board/board.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
-  imports: [CardModule, ColumnModule, BoardModule,
+  imports: [CardModule, ColumnModule, BoardModule, AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -17,5 +19,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true
     })
   ],
+  
 })
 export class AppModule {}

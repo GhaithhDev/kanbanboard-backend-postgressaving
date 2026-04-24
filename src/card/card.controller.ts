@@ -5,6 +5,7 @@ import { BoardService } from 'src/board/board.service';
 import { EditCardDto } from './edit-card.dto';
 import { Card } from './card.entity';
 import { GetCardsFilterDto } from './get-cards-fitler.dto';
+import { createDecipheriv } from 'crypto';
 
 @Controller('card')
 export class CardController {
@@ -15,8 +16,9 @@ export class CardController {
         private boardService: BoardService
     ) {}
 
-    @Post()
+    @Post('create')
     createCard(@Body() createCardDTO : CreateCardDto ) : Promise<Card>{
+        console.log("reached", createCardDTO);
        return this.cardService.createCard(createCardDTO); //nest js will await internally to get the result of that promise
     }
 

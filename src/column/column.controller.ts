@@ -1,26 +1,27 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { ColumnService } from './column.service';
 
-import { CreateColumnDTO } from './createColumn.dto';
-
+import { ColumnResponse } from './column-response';
+import { CreateColumnDTO } from './create-column.dto';
 
 @Controller('column')
 export class ColumnController {
+  constructor(private columnService: ColumnService) {}
 
-    constructor (private columnService : ColumnService) {}
+  @Get('/:columnId')
+  getColumnById(@Param('columnId') columnId: string): Promise<ColumnResponse> {
+    return this.columnService.getColumnById(columnId);
+  }
 
-    /*@Get()
-    private getAllColumns(){
-        return this.columnService.getAllColumns()
-    }
+  @Post('create')
+  async createColumn(
+    @Body() createColumnDTO: CreateColumnDTO,
+  ): Promise<string> {
+    return (await this.columnService.createColumn(createColumnDTO)).id;
+  }
 
-    @Get('/:id')
-    private getColumnById(@Param('id') id: string){
-        //Just like this I got the id from the header
-    }
-
-    @Post('create')
-    private createColumn(@Body() createColumnDTO : CreateColumnDTO){
-        this.columnService.createColumn(createColumnDTO.columnName,createColumnDTO.boardId);
-    }*/
+  @Delete('/:id')
+  deleteColumn(@Param('id') columnId: string) {
+    this.columnService.deleteColumn(columnId);
+  }
 }

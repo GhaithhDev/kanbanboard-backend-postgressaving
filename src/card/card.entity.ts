@@ -1,5 +1,5 @@
 import { Priority } from "src/enums/priority";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Card {
@@ -16,6 +16,6 @@ export class Card {
     @Column({nullable: true})
     description?: string;
 
-    /*@Column()
-    columnId!: string*/
+    @Column()
+    parentColumnId!: string
 }

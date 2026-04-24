@@ -1,27 +1,31 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './create.board.dto';
-import { GetBoardDto } from './getBoardData.dto';
+import { GetBoardDto } from './get.board.dto';
 
 import { type } from 'os';
+import { BoardRepository } from './board.repository';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 
 @Controller('board')
+@UseGuards(AuthGuard())
 export class BoardController {
 
-    constructor(private boardService: BoardService) {} // inject BoardService to be a member of this class
+    constructor(
+        private boardService: BoardService,
+        private boardRepository: BoardRepository
+    ) {} // inject BoardService to be a member of this class
 
-    /*@Get()
-    getAllBoards(){
-        return this.boardService.getAllBoards()
+    @Get('/:boardId')
+    getBoardDataById(@Param('boardId') boardId : string, @GetUser() user: User ){
+        console.log(user);
+        return this.boardService.getBoardDataById(boardId,user);
     }
-
-    @Get('boardId')
-    getBoardDataById(@Body() getBoardDto : GetBoardDto ){
-        return this.boardService.getBoardDataById(getBoardDto.boardId)
-    }
-
+    
     @Post('create')
-    createBoard(@Body() createBoardDto : CreateBoardDto ){
-       return this.boardService.createBoard(createBoardDto.name);
-    }*/
+    createBoard(@Body() createBoardDto : CreateBoardDto, @GetUser() user: User  ){
+       return this.boardService.createBoard(createBoardDto,user);
+    }
 }

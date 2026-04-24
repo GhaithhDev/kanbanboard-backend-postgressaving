@@ -13,4 +13,8 @@ export class CreateCardDto  {
     @IsOptional()   
     @IsString()
     priority?: Priority;
+
+    @IsNotEmpty()
+    @IsString()
+    parentColumnId!: string;
 }

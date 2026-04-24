@@ -5,9 +5,10 @@ import { BoardModule } from 'src/board/board.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Card } from './card.entity';
 import { CardRepository } from './card.repository';
+import { ColumnModule } from 'src/column/column.module';
 
 @Module({
-  imports: [forwardRef(() => BoardModule), TypeOrmModule.forFeature([Card])],
+  imports: [forwardRef(() => BoardModule), TypeOrmModule.forFeature([Card]), forwardRef(()=> ColumnModule)],
   controllers: [CardController],
   providers: [CardService, CardRepository],
   exports: [CardService],
