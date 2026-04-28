@@ -12,4 +12,7 @@ export class User {
     @Column()
     password!: string;
 
+    @Column({ default: () => "floor(random() * 6) + 1", type: "int" })
+    userColorNum!: number;
+
 }

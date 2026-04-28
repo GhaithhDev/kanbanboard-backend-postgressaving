@@ -17,4 +17,8 @@ export class CreateCardDto  {
     @IsNotEmpty()
     @IsString()
     parentColumnId!: string;
+
+    @IsNotEmpty()
+    @IsString()
+    boardId!: string;
 }

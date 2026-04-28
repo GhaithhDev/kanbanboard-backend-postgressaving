@@ -88,13 +88,17 @@ export class CardRepository extends Repository<Card> {
 
   public async updateCardDetails(editCardDto: EditCardDto): Promise<Card> {
     //get a copy of the card entity from the data base
-    let card: Card | undefined = await this.getCardById(editCardDto.cardId);
-
+    let card: Card | undefined = await this.getCardById(editCardDto.id);
+    if(!card){
+      throw new NotFoundException(); 
+    }
     //mutate that copy
     //card.columnId = editCardDto.columnId;
     card.title = editCardDto.title;
     card.description = editCardDto.description;
     card.priority = editCardDto.priority;
+    card.parentColumnId = editCardDto.parentColumnId
+    card.externalWorker = editCardDto.externalWorker? editCardDto.externalWorker : card.externalWorker
 
     //commit the changes
     try {

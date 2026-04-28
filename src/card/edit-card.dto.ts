@@ -1,24 +1,27 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 import { Priority } from 'src/enums/priority';
 
-export class EditCardDto  {
+export class EditCardDto {
+  @IsString()
+  @IsNotEmpty()
+  id!: string;
 
-    @IsString()
-    title!: string;
+  @IsString()
+  @IsNotEmpty()
+  title!: string;
 
-    @IsNotEmpty()
-    @IsString()
-    columnId!: string
-   
-    @IsString()
-    description!: string;
- 
-    @IsNotEmpty()
-    @IsString()
-    priority!: Priority;
+  @IsString()
+  @IsNotEmpty()
+  description!: string;
 
-    @IsNotEmpty()
-    @IsString()
-    cardId!: string
+  @IsNotEmpty()
+  @IsString()
+  priority!: Priority;
 
+  @IsString()
+  @IsNotEmpty()
+  parentColumnId!: string;
+
+  @IsOptional()
+  externalWorker?: string;
 }

@@ -6,6 +6,7 @@ export class CreateBoardDto {
     @IsNotEmpty()
     name!: string;
 
-    @IsNumber()
-    colorNum!: number;
+    @IsString()
+    @IsNotEmpty()
+    colorNum!: string;
 }

@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { ArrayContains, Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { DataSource } from 'typeorm';
 import { CreateBoardDto } from './create.board.dto';
@@ -16,12 +16,12 @@ export class BoardRepository extends Repository<Board> {
     super(Board, dataSource.createEntityManager());
   }
 
-  public async getBoardById(boardId: string, user: User) {
+  public async getBoardById(boardId: string) {
     if (!boardId) {
       throw new BadRequestException();
     }
     const result = await this.findOne({
-      where: { id: boardId, ownerId: user.id },
+      where: { id: boardId },
     });
     if (!result) {
       throw new NotFoundException();
@@ -37,17 +37,25 @@ export class BoardRepository extends Repository<Board> {
     return boards;
   }
 
+
+   public async getSharedBoards(user: User): Promise<Board[]> {
+      const boards: Board[] = await this.findBy({
+        authorizedUserIds: ArrayContains([user.id])
+      })
+      return boards;
+    }
+
   public async createBoard(
     createBoardDto: CreateBoardDto,
     user: User,
   ): Promise<Board> {
     const { name, colorNum } = createBoardDto;
-
+    console.log(parseInt(colorNum));
     const newBoard = this.create({
       ownerId: user.id,
       name: name,
       authorizedUserIds: [],
-      colorNum: colorNum
+      colorNum: parseInt(colorNum)
     });
 
     try {

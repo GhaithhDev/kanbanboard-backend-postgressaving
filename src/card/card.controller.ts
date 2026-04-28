@@ -1,52 +1,70 @@
-import { Controller, Get, Post, Body, Inject, forwardRef, Patch, Param, BadRequestException, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Inject,
+  forwardRef,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CardService } from './card.service';
 import { CreateCardDto } from './create-card.dto';
 import { BoardService } from 'src/board/board.service';
 import { EditCardDto } from './edit-card.dto';
-import { Card } from './card.entity';
-import { GetCardsFilterDto } from './get-cards-fitler.dto';
-import { createDecipheriv } from 'crypto';
+import { CardResponse } from './card.response';
+import { UpdateExternalWorkerDto } from './update-external-worker.dto';
 
 @Controller('card')
 export class CardController {
+  constructor(private cardService: CardService) {}
 
-    constructor(
-        private cardService: CardService,
-        @Inject( forwardRef( () => BoardService ) )
-        private boardService: BoardService
-    ) {}
+  @Post('create')
+  createCard(@Body() createCardDTO: CreateCardDto): Promise<CardResponse[]> {
+    console.log('reached', createCardDTO);
+    return this.cardService.createCard(createCardDTO); //nest js will await internally to get the result of that promise
+  }
 
-    @Post('create')
-    createCard(@Body() createCardDTO : CreateCardDto ) : Promise<Card>{
-        console.log("reached", createCardDTO);
-       return this.cardService.createCard(createCardDTO); //nest js will await internally to get the result of that promise
-    }
+  @Get('columnId/:columnId')
+  getCardsWithColumnId(
+    @Param('columnId') columnId: string,
+  ): Promise<CardResponse[]> {
+    return this.cardService.getCardsWithColumnId(columnId);
+  }
 
-    @Delete('/:id')
-    private deleteCardById(@Param('id') id: string){
-        return this.cardService.deleteCard(id);
-    }
+  @Get('boardId/:boardId')
+  getCardsWithBoardId(
+    @Param('boardId') boardId: string,
+  ): Promise<CardResponse[]> {
+    return this.cardService.getCardsWithBoardId(boardId);
+  }
 
-    @Get()
-    private getCards( @Query() getCardsFilter : GetCardsFilterDto) : Promise<Card[]>{
-        return this.cardService.getCards(getCardsFilter);
-    }
+  @Delete('/:id')
+  deleteCardById(@Param('id') id: string) {
+    return this.cardService.deleteCard(id);
+  }
 
-    @Get('/:id')
+  /*@Get('/:id')
     private getCardById(@Param('id') id: string) : Promise<Card>{
         return this.cardService.getCardById(id);
-    }
+    }*/
 
-    @Patch('editCard')
-    updateCardDetails( @Body() editCardDto : EditCardDto){
-        return this.cardService.updateCardDetails(editCardDto);
-   }
+  @Patch('editCard')
+  updateCardDetails(@Body() editCardDto: EditCardDto): Promise<CardResponse[]> {
+    return this.cardService.updateCardDetails(editCardDto);
+  }
 
-   //other functions to update individual properties of the card like title, description, priority, etc
-   //@Patch('/:id/title') // and then title from the body
-   //@Patch('/:id/description') // and then description from the body
-   //@Patch('/:id/priority') // and then priority from the body
-    /*
+  @Patch('externalWorker')
+  updateExternalWorker(@Body() updateExternalWorkerDto: UpdateExternalWorkerDto ){
+    return this.cardService.updateExternalWorker(updateExternalWorkerDto);
+  }
+
+  //other functions to update individual properties of the card like title, description, priority, etc
+  //@Patch('/:id/title') // and then title from the body
+  //@Patch('/:id/description') // and then description from the body
+  //@Patch('/:id/priority') // and then priority from the body
+  /*
    @Post('editCard')
    updateCardDetails( @Body() editCardDto : EditCardDTO){
         this.cardService.editCardDetails(editCardDto);

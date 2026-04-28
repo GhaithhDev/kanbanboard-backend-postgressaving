@@ -13,9 +13,12 @@ export class Card {
     @Column()
     priority!: Priority;
 
-    @Column({nullable: true})
-    description?: string;
+    @Column()
+    description!: string;
 
     @Column()
     parentColumnId!: string
+
+    @Column({nullable: true})
+    externalWorker?: string
 }

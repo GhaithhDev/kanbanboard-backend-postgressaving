@@ -42,7 +42,7 @@ export class UsersRepository extends Repository<User> {
     
     const user: User = this.create({
       username: username,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     try {
