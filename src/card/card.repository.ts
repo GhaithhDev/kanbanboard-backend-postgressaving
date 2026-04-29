@@ -95,8 +95,8 @@ export class CardRepository extends Repository<Card> {
     //mutate that copy
     //card.columnId = editCardDto.columnId;
     card.title = editCardDto.title;
-    card.description = editCardDto.description;
-    card.priority = editCardDto.priority;
+    card.description = editCardDto.description? editCardDto.description : card.description;
+    card.priority = editCardDto.priority? editCardDto.priority: card.priority;
     card.parentColumnId = editCardDto.parentColumnId
     card.externalWorker = editCardDto.externalWorker? editCardDto.externalWorker : card.externalWorker
 

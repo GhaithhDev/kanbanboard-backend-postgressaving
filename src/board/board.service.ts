@@ -152,6 +152,15 @@ export class BoardService {
     return this.getBoardDataById(board.id);
   }
 
+  public async deleteBoard(boardId: string) {
+    const columns: ColumnEntity[] = await this.columnRepository.getColumnsWithBoardId(boardId);
+    for( let i =0; i<columns.length; i++ ){
+      this.cardRepository.delete({parentColumnId: columns[i].id}) //delete related cards
+      this.columnRepository.delete({ id: columns[i].id });
+    }
+    this.boardRepository.delete({ id: boardId })
+  }
+
   //Get all boards that users owns
   /*public getAllBoards() : BoardResponse[] | undefined{
         return this.boards.map( 

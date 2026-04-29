@@ -10,13 +10,13 @@ export class EditCardDto {
   @IsNotEmpty()
   title!: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  description!: string;
+  description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  priority!: Priority;
+  priority?: Priority;
 
   @IsString()
   @IsNotEmpty()

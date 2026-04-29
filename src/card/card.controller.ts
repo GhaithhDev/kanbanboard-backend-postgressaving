@@ -45,10 +45,10 @@ export class CardController {
     return this.cardService.deleteCard(id);
   }
 
-  /*@Get('/:id')
-    private getCardById(@Param('id') id: string) : Promise<Card>{
-        return this.cardService.getCardById(id);
-    }*/
+  @Get('getCard/:id')
+  getCardById(@Param('id') id: string): Promise<CardResponse> {
+    return this.cardService.getCardById(id);
+  }
 
   @Patch('editCard')
   updateCardDetails(@Body() editCardDto: EditCardDto): Promise<CardResponse[]> {
@@ -56,7 +56,9 @@ export class CardController {
   }
 
   @Patch('externalWorker')
-  updateExternalWorker(@Body() updateExternalWorkerDto: UpdateExternalWorkerDto ){
+  updateExternalWorker(
+    @Body() updateExternalWorkerDto: UpdateExternalWorkerDto,
+  ) {
     return this.cardService.updateExternalWorker(updateExternalWorkerDto);
   }
 
